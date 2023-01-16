@@ -1,33 +1,35 @@
 import css from './ContactList.module.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteContact } from 'redux/contactsSlice/contactsSlice';
+import { selectVisibleContacts } from 'redux/selectors';
 
 export const ContactList = () => {
-  const contacts = useSelector(state => state.contacts.contacts);
   const dispatch = useDispatch();
-  const filter = useSelector(state => state.filter);
+  const contacts = useSelector(selectVisibleContacts);
 
-  const onInputFilter = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(filter.toLowerCase())
-  );
+  // if (!contacts) return;
 
   return (
-    <ul className={css.contactList}>
-      {onInputFilter.map(({ id, name, number }) => (
-        <li key={id} className={css.contactListItem}>
-          {name} : {number}
-          <button
-            type="button"
-            className={css.contactListItemBtn}
-            onClick={() => {
-              const action = deleteContact(id);
-              dispatch(action);
-            }}
-          >
-            Delete
-          </button>
-        </li>
-      ))}
-    </ul>
+    <>
+      {contacts.length > 0 && (
+        <ul className={css.contactList}>
+          {contacts.map(({ id, name, number }) => (
+            <li key={id} className={css.contactListItem}>
+              {name} : {number}
+              <button
+                type="button"
+                className={css.contactListItemBtn}
+                onClick={() => {
+                  const action = deleteContact(id);
+                  dispatch(action);
+                }}
+              >
+                Delete
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
   );
 };
